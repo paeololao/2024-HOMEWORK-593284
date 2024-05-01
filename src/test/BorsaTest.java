@@ -13,15 +13,18 @@ public class BorsaTest {
 	private Borsa borsaVuota;
 	private Borsa borsaNonVuota;
 	private Attrezzo attrezzoPresente;
-	private Attrezzo attrezzoNonPresente;
+	private Attrezzo attrezzoDaCancellare;
 	
 	@Before
 	public void setUp() {
 		this.borsaVuota = new Borsa();
 		this.borsaNonVuota = new Borsa();
-		this.attrezzoPresente = new Attrezzo("ci sono", 4);
-		this.borsaNonVuota.addAttrezzo(attrezzoPresente);
-		this.attrezzoNonPresente = new Attrezzo("non ci sono", 6);
+		this.attrezzoDaCancellare = new Attrezzo("cancellami", 3);
+		this.borsaNonVuota.addAttrezzo(attrezzoDaCancellare);
+		this.attrezzoPresente = new Attrezzo("ci sono", 2);
+		this.borsaNonVuota.addAttrezzo(attrezzoPresente);	
+		this.borsaNonVuota.removeAttrezzo("cancellami");
+		
 		
 	}
 
@@ -36,8 +39,9 @@ public class BorsaTest {
 	}
 	
 	@Test
-	public void testBorsaConAttrezzoNonPresente() {
-		assertNotEquals(this.borsaNonVuota.getAttrezzo("non ci sono").getNome(), this.attrezzoNonPresente.getNome());
+	public void testCancellazione() {
+		assertNull(this.borsaNonVuota.getAttrezzo("cancellami"));
 	}
+	
 
 }

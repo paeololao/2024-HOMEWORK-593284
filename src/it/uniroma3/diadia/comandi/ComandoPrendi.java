@@ -1,49 +1,33 @@
 package it.uniroma3.diadia.comandi;
 
-import it.uniroma3.diadia.partita.IO;
-import it.uniroma3.diadia.partita.Partita;
+import it.uniroma3.diadia.IO;
+import it.uniroma3.diadia.Partita;
 import it.uniroma3.diadia.attrezzi.Attrezzo;
 
-public class ComandoPrendi implements Comando {
+public class ComandoPrendi extends AbstractComando {
 
-	private IO io;
-	private String nomeAttrezzo;
-	private static final String NOME = "prendi";
+	private final static String NOME = "prendi";
 
+	
 	@Override
 	public void esegui(Partita partita) {
-		if(!partita.getStanzaCorrente().hasAttrezzo(this.nomeAttrezzo)) {
-			this.io.mostraMessaggio("Attrezzo " + this.nomeAttrezzo + " non presente nella stanza");
-			return;
-		}
-		Attrezzo attrezzoDaPrendere = partita.getStanzaCorrente().getAttrezzo(this.nomeAttrezzo);
-		boolean attrezzoPreso = partita.getGiocatore().getBorsa().addAttrezzo(attrezzoDaPrendere);
-		if (!attrezzoPreso) {
-			this.io.mostraMessaggio("Non c'è più spazio per nuovi attrezzi nella borsa");
-			return;
-		}
-		partita.getStanzaCorrente().removeAttrezzo(attrezzoDaPrendere);
-		this.io.mostraMessaggio("Attrezzo " + this.nomeAttrezzo + " preso!");
-	}
-
-	@Override
-	public void setParametro(String parametro) {
-		this.nomeAttrezzo = parametro;
-	}
-
-	@Override
-	public void setIO(IO io) {
-		this.io = io;
+		Attrezzo a = partita.getLabirinto().getStanzaCorrente().getAttrezzo(this.getParametro());
+		if(a==null) {
+			this.getIo().mostraMessaggio("Attrezzo non presente nella stanza!");
+		} 
+		else {
+			if(partita.getGiocatore().getBorsa().getPesoRimanente(a)) {
+				partita.getGiocatore().getBorsa().addAttrezzo(a);
+				partita.getLabirinto().getStanzaCorrente().removeAttrezzo(a);
+			} 
+			else
+				this.getIo().mostraMessaggio("Attrezzo troppo pesante per entrare nella borsa!");
+			}
 	}
 
 	@Override
 	public String getNome() {
 		return NOME;
-	}
-
-	@Override
-	public String getParametro() {
-		return this.nomeAttrezzo;
 	}
 
 }
